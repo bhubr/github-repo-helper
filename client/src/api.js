@@ -1,13 +1,14 @@
 import axios from 'axios'
 
-const storedToken = sessionStorage.getItem('gh:token')
 
 const github = axios.create({
   baseURL: 'https://api.github.com',
 })
 
-if (storedToken) {
-  github.defaults.headers.authorization = `Bearer ${storedToken}`
+const storedAuth = sessionStorage.getItem('gh:auth')
+const initialAuth = storedAuth ? JSON.parse(storedAuth) : null
+if (initialAuth) {
+  github.defaults.headers.authorization = `Bearer ${initialAuth.access_token}`
 }
 
 export const getTeam = async (org, teamName) =>
@@ -60,9 +61,10 @@ const setBranchProtection = async (fullName, branchName) =>
     { headers: { accept: 'application/vnd.github.luke-cage-preview+json' } }
   )
 
-const addMember = async (fullName, login) => github.put(`/repos/${fullName}/collaborators/${login}`, {
-  permission: 'push'
-})
+const addMember = async (fullName, login) =>
+  github.put(`/repos/${fullName}/collaborators/${login}`, {
+    permission: 'push',
+  })
 
 export const createFullRepo = async (orgName, repoName, template, members) => {
   // Create the repo
@@ -83,9 +85,13 @@ export const createFullRepo = async (orgName, repoName, template, members) => {
   // await setBranchProtection(fullName, 'master')
 
   // Add members
-  await Promise.all(members.map(m => addMember(fullName, m)))
+  await Promise.all(members.map((m) => addMember(fullName, m)))
 }
 
 export const setAuthHeader = (token) => {
-  github.defaults.headers.authorization = `Bearer ${token}`
+  if (token) {
+    github.defaults.headers.authorization = `Bearer ${token}`
+  } else {
+    delete github.defaults.headers.authorization
+  }
 }

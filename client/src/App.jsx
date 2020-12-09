@@ -1,102 +1,11 @@
-import React, { useState, useEffect, useContext, useReducer } from 'react'
+import React, { useEffect, useContext } from 'react'
 import Login from './components/Login'
+import withAuthProvider from './hoc/withAuthProvider'
 import AuthContext from './contexts/auth'
-import { getTeam, createFullRepo, getCommits } from './api'
-// import './App.css'
+import useFatReducer from './hooks/useFatReducer'
+import { getTeam, createFullRepo } from './api'
 
-const onFailure = (response) => console.error(response)
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'INPUT':
-      const { name, value } = action
-      return { ...state, [name]: value }
-    case 'STORE_MEMBERS':
-      const { members } = action
-      return { ...state, teamMembers: members }
-    case 'TOGGLE_MEMBER':
-      const { login } = action
-      const repoMembers = state.repoMembers.includes(login)
-        ? state.repoMembers.filter((l) => l !== login)
-        : [...state.repoMembers, login]
-      return { ...state, repoMembers }
-    default:
-      throw new Error()
-  }
-}
-
-const getStoredState = () => {
-  const defaultState = {
-    orgName: 'a',
-    teamName: 'b',
-    repoPrefix: 'c',
-    repoName: '',
-    template: '',
-    repoMembers: [],
-    teamMembers: [],
-  }
-  const storedJson = sessionStorage.getItem('wcs:projdata')
-  if (!storedJson) return defaultState
-  try {
-    const parsedState = JSON.parse(storedJson)
-    return { ...defaultState, ...parsedState }
-  } catch (err) {
-    return defaultState
-  }
-}
-
-const setStoredState = (state) => {
-  const stateJson = JSON.stringify(state)
-  sessionStorage.setItem('wcs:projdata', stateJson)
-}
-
-const useFatReducer = () => {
-  const initialState = getStoredState()
-  const [state, dispatch] = useReducer(reducer, initialState)
-
-  const dispatchAndStore = async (...args) => {
-    await dispatch(...args)
-  }
-
-  useEffect(() => {
-    setStoredState(state)
-  }, [state])
-
-  const handleInput = ({ target: { name, value } }) =>
-    dispatchAndStore({
-      type: 'INPUT',
-      name,
-      value,
-    })
-
-  const setTeamMembers = (members) =>
-    dispatchAndStore({
-      type: 'STORE_MEMBERS',
-      members,
-    })
-
-  const toggleRepoMember = (login) =>
-    dispatchAndStore({
-      type: 'TOGGLE_MEMBER',
-      login,
-    })
-
-  const isRepoMember = (login) => state?.repoMembers?.includes(login)
-
-  return [
-    state,
-    {
-      handleInput,
-      setTeamMembers,
-      isRepoMember,
-      toggleRepoMember,
-    },
-  ]
-}
-
-export default function App() {
-  // const [teamName, setTeamName] = useState('')
-  // const [teamData, setTeamData] = useState([])
+function App() {
   const [state, methods] = useFatReducer()
   const { auth } = useContext(AuthContext)
 
@@ -120,15 +29,24 @@ export default function App() {
 
   const handleSubmitTeamName = async (e) => {
     e.preventDefault()
+    console.log(auth)
     const teamData = await getTeam('WildCodeSchool', teamName)
+    const isCurrentUserMember = !!teamData.find((u) => u.login === auth.login)
+    if (!isCurrentUserMember) {
+      teamData.push({ id: auth.id, login: auth.login })
+    }
     setTeamMembers(teamData)
   }
 
   const handleSubmitRepo = async (e) => {
     e.preventDefault()
     const fullRepoName = `${repoPrefix}${repoName}`
-    const newRepo = await createFullRepo(orgName, fullRepoName, template, repoMembers)
-    // await getCommits(template)
+    const newRepo = await createFullRepo(
+      orgName,
+      fullRepoName,
+      template,
+      repoMembers
+    )
   }
 
   return (
@@ -212,3 +130,5 @@ export default function App() {
     </div>
   )
 }
+
+export default withAuthProvider(App)
