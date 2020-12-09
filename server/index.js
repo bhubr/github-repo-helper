@@ -7,7 +7,7 @@ const { port, oauth } = require('./settings');
 
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:1234'
+  origin: 'http://localhost:3000'
 }));
 
 app.get('/spotify/token', (req, res) => {

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import OAuth2Login from 'react-simple-oauth2-login'
 import ErrorAlert from './ErrorAlert'
-import AuthContext from './contexts/auth'
+import AuthContext from '../contexts/auth'
 import {
   authorizationUrl,
   clientId,
   redirectUri,
   serverUrl,
-} from './settings-code'
-import { setAuthHeader } from './api'
+} from '../settings-code'
+import { setAuthHeader } from '../api'
 
 // eslint-disable-next-line space-before-function-paren
 export default function Login() {
