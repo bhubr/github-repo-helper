@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-export default function ErrorAlert({ error }) {
+export default function ErrorAlert ({ error }) {
   return (
     <div className="ErrorAlert">
       {error && error.message}

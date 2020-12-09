@@ -5,13 +5,30 @@
   "main": "index.js",
   "scripts": {
     "build": "parcel build index.html --public-url=./",
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "lint": "eslint --fix --ext .js,.jsx src"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.3",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.21.5",
+    "parcel": "^1.12.4",
     "parcel-bundler": "^1.12.4"
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "object-assign": "^4.1.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "^4.0.1",
+    "react-simple-oauth2-login": "^0.2.0",
+    "scheduler": "^0.20.1"
   }
 }
