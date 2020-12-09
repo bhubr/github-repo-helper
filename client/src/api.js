@@ -45,18 +45,22 @@ const setDefaultBranch = async (fullName, branchName) =>
   })
 
 const setBranchProtection = async (fullName, branchName) =>
-  await github.patch(
+  await github.put(
     `/repos/${fullName}/branches/${branchName}/protection`,
     {
       required_pull_request_reviews: {
-        dismissal_restrictions: {
-          users: [],
-          teams: [],
-        },
+        // dismissal_restrictions: {
+        //   users: [],
+        //   teams: [],
+        // },
         dismiss_stale_reviews: false,
-        require_code_owner_reviews: true,
-        required_approving_review_count: 1,
+        require_code_owner_reviews: false,
+        required_approving_review_count: 1
       },
+      enforce_admins: false,
+      required_status_checks: null,
+      restrictions: null,
+      // TODO: restrict who can push to matching branches
     },
     { headers: { accept: 'application/vnd.github.luke-cage-preview+json' } }
   )
@@ -81,11 +85,11 @@ export const createFullRepo = async (orgName, repoName, template, members) => {
   // await setDefaultBranch(fullName, 'dev')
 
   // Create branch protections TODO: get list of branches before doing it
-  // WIP
-  // await setBranchProtection(fullName, 'master')
+  await setBranchProtection(fullName, 'master')
+  await setBranchProtection(fullName, 'dev')
 
   // Add members
-  await Promise.all(members.map((m) => addMember(fullName, m)))
+  // await Promise.all(members.map((m) => addMember(fullName, m)))
 }
 
 export const setAuthHeader = (token) => {
