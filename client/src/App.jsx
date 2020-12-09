@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import AuthorizationCodeExample from './AuthorizationCodeExample'
+import Login from './components/Login'
 import AuthContext from './contexts/auth'
 import { getTeam } from './api'
 
@@ -19,7 +19,7 @@ export default function App() {
   }
   return (
     <div className="App">
-      <AuthorizationCodeExample />
+      <Login />
       <div>
         <form onSubmit={handleSubmit}>
           <label>
