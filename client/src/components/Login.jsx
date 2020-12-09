@@ -36,7 +36,7 @@ export default function Login() {
           redirectUri={redirectUri}
           responseType="code"
           buttonText="Auth code login"
-          scope="admin:org"
+          scope="admin:org repo"
           onSuccess={onSuccess}
           onFailure={setError}
         />
