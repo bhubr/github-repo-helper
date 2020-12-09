@@ -14,6 +14,9 @@ const reducer = (state, action) => {
         ? state.repoMembers.filter((l) => l !== login)
         : [...state.repoMembers, login]
       return { ...state, repoMembers }
+    case 'SET_STEP':
+      const { step } = action
+      return { ...state, step }
     default:
       throw new Error()
   }
@@ -21,6 +24,7 @@ const reducer = (state, action) => {
 
 const getStoredState = () => {
   const defaultState = {
+    step: 1,
     orgName: '',
     teamName: '',
     repoPrefix: '',
@@ -75,6 +79,8 @@ const useFatReducer = () => {
       login,
     })
 
+  const setStep = (step) => dispatchAndStore({ type: 'SET_STEP', step })
+
   const isRepoMember = (login) => state?.repoMembers?.includes(login)
 
   return [
@@ -84,6 +90,7 @@ const useFatReducer = () => {
       setTeamMembers,
       isRepoMember,
       toggleRepoMember,
+      setStep,
     },
   ]
 }

@@ -1,9 +1,21 @@
-import React, { useEffect, useContext } from 'react'
-import Login from './components/Login'
+import React, { useState, useEffect, useContext } from 'react'
+import AppMenu from './components/AppMenu'
+import SettingsOrgTeam from './components/SettingsOrgTeam'
+import SettingsRepo from './components/SettingsRepo'
 import withAuthProvider from './hoc/withAuthProvider'
 import AuthContext from './contexts/auth'
 import useFatReducer from './hooks/useFatReducer'
 import { getTeam, createFullRepo } from './api'
+import './App.css'
+
+const Layout = ({ children }) => (
+  <div className="App">
+    <AppMenu />
+    <main className="App-inner">{children}</main>
+  </div>
+)
+
+const Splash = () => <div className="Splash">Please login!</div>
 
 function App() {
   const [state, methods] = useFatReducer()
@@ -23,6 +35,7 @@ function App() {
     setTeamMembers,
     toggleRepoMember,
     isRepoMember,
+    setStep,
   } = methods
 
   useEffect(() => {}, [auth])
@@ -36,6 +49,7 @@ function App() {
       teamData.push({ id: auth.id, login: auth.login })
     }
     setTeamMembers(teamData)
+    setStep(2)
   }
 
   const handleSubmitRepo = async (e) => {
@@ -49,86 +63,42 @@ function App() {
     )
   }
 
-  return (
-    <div className="App">
-      <Login />
-      <div>
-        <form onSubmit={handleSubmitTeamName}>
-          <label>
-            Org:
-            <input
-              name="orgName"
-              value={orgName}
-              onChange={handleInput}
-              placeholder="YourOrg"
-            />
-          </label>
-          <label>
-            Team:
-            <input
-              name="teamName"
-              value={teamName}
-              onChange={handleInput}
-              placeholder="this-awesome-team"
-            />
-          </label>
-          <label>
-            Repo name prefix:
-            <input
-              name="repoPrefix"
-              value={repoPrefix}
-              onChange={handleInput}
-              placeholder="common-repo-name-"
-            />
-          </label>
-          <button>Submit</button>
-        </form>
-        <form onSubmit={handleSubmitRepo}>
-          <label>
-            Repo name:
-            <input
-              name="repoName"
-              value={repoName}
-              onChange={handleInput}
-              placeholder="name"
-            />
-          </label>
-          <label>
-            Repo template:
-            <input
-              name="template"
-              value={template}
-              onChange={handleInput}
-              placeholder="login/repo"
-            />
-          </label>
-          <button>Submit</button>
-        </form>
-        {teamMembers.map((member) => (
-          <div key={member.id}>
-            <label>
-              <input
-                htmlFor={`cb-${member.login}`}
-                type="checkbox"
-                checked={isRepoMember(member.login)}
-                onChange={() => toggleRepoMember(member.login)}
-              />{' '}
-              {member.login}
-            </label>
-          </div>
-        ))}
-        <label>
-          <input
-            htmlFor={`cb-WWWilder`}
-            type="checkbox"
-            checked={isRepoMember('WWWilder')}
-            onChange={() => toggleRepoMember('WWWilder')}
-          />{' '}
-          WWWilder
-        </label>
-      </div>
-    </div>
-  )
+  if (!auth) {
+    return (
+      <Layout>
+        <Splash />
+      </Layout>
+    )
+  }
+
+  switch (state.step) {
+    case 1:
+      return (
+        <Layout>
+          <SettingsOrgTeam
+            orgName={orgName}
+            teamName={teamName}
+            handleInput={handleInput}
+            handleSubmitTeamName={handleSubmitTeamName}
+          />
+        </Layout>
+      )
+    case 2:
+      return (
+        <Layout>
+          <SettingsRepo
+            repoPrefix={repoPrefix}
+            repoName={repoName}
+            template={template}
+            teamMembers={teamMembers}
+            handleSubmitRepo={handleSubmitRepo}
+            methods={methods}
+          />
+        </Layout>
+      )
+    default:
+      return <h1>Error</h1>
+  }
 }
 
 export default withAuthProvider(App)
