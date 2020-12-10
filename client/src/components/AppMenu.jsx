@@ -8,7 +8,7 @@ import {
   clientId,
   redirectUri,
   serverUrl,
-} from '../settings-code'
+} from '../settings'
 import { setAuthHeader } from '../api'
 
 export default function AppMenu() {
