@@ -25,14 +25,14 @@ export default function SettingsRepo({
       text,
     })
 
-  const handleSubmitRepo = async (e) => {
+  const handleSubmitRepo = async(e) => {
     e.preventDefault()
 
     // Create repo
     setLoading('Creating repo')
     const fullRepoName = `${repoPrefix}${repoName}`
     const repo = await createRepo(orgName, fullRepoName, template).catch(
-      rethrow('repo creation')
+      rethrow('repo creation'),
     )
 
     // Wait some time (otherwise no commits exist => can't create dev branch)
@@ -42,7 +42,7 @@ export default function SettingsRepo({
     setLoading('Post-creation setup')
     const { full_name: fullName } = repo
     await setupRepo(fullName, repoMembers, repoAdmin).catch(
-      rethrow('repo post-setup')
+      rethrow('repo post-setup'),
     )
 
     setStatus({

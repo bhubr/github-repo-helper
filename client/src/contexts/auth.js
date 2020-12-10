@@ -2,5 +2,5 @@ import { createContext } from 'react'
 
 export default createContext({
   auth: null,
-  setAuth: () => {}
+  setAuth: () => {},
 })

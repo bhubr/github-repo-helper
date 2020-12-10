@@ -8,9 +8,9 @@ export default function SettingsOrgTeam({
     handleInput,
     setTeamMembers,
     setStep,
-  }
+  },
 }) {
-  const handleSubmitTeamName = async (e) => {
+  const handleSubmitTeamName = async(e) => {
     e.preventDefault()
     const teamData = await getTeam('WildCodeSchool', teamName)
     const isCurrentUserMember = !!teamData.find((u) => u.login === auth.login)
