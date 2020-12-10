@@ -5,7 +5,6 @@ import SettingsRepo from './components/SettingsRepo'
 import withAuthProvider from './hoc/withAuthProvider'
 import AuthContext from './contexts/auth'
 import useFatReducer from './hooks/useFatReducer'
-import { getTeam, createFullRepo } from './api'
 import './App.css'
 
 const Layout = ({ children }) => (
@@ -24,44 +23,9 @@ function App() {
   const {
     orgName,
     teamName,
-    repoPrefix,
-    repoName,
-    template,
-    teamMembers,
-    repoMembers,
   } = state
-  const {
-    handleInput,
-    setTeamMembers,
-    toggleRepoMember,
-    isRepoMember,
-    setStep,
-  } = methods
 
   useEffect(() => {}, [auth])
-
-  const handleSubmitTeamName = async (e) => {
-    e.preventDefault()
-    console.log(auth)
-    const teamData = await getTeam('WildCodeSchool', teamName)
-    const isCurrentUserMember = !!teamData.find((u) => u.login === auth.login)
-    if (!isCurrentUserMember) {
-      teamData.push({ id: auth.id, login: auth.login })
-    }
-    setTeamMembers(teamData)
-    setStep(2)
-  }
-
-  const handleSubmitRepo = async (e) => {
-    e.preventDefault()
-    const fullRepoName = `${repoPrefix}${repoName}`
-    const newRepo = await createFullRepo(
-      orgName,
-      fullRepoName,
-      template,
-      repoMembers
-    )
-  }
 
   if (!auth) {
     return (
@@ -76,10 +40,10 @@ function App() {
       return (
         <Layout>
           <SettingsOrgTeam
+            auth={auth}
             orgName={orgName}
             teamName={teamName}
-            handleInput={handleInput}
-            handleSubmitTeamName={handleSubmitTeamName}
+            methods={methods}
           />
         </Layout>
       )
@@ -87,11 +51,8 @@ function App() {
       return (
         <Layout>
           <SettingsRepo
-            repoPrefix={repoPrefix}
-            repoName={repoName}
-            template={template}
-            teamMembers={teamMembers}
-            handleSubmitRepo={handleSubmitRepo}
+            repoAdmin={auth.login}
+            state={state}
             methods={methods}
           />
         </Layout>

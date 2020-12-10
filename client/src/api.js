@@ -13,7 +13,7 @@ if (initialAuth) {
 export const getTeam = async (org, teamName) =>
   github.get(`/orgs/${org}/teams/${teamName}/members`).then((res) => res.data)
 
-const createRepo = async (orgName, repoName, template) => {
+export const createRepo = async (orgName, repoName, template) => {
   const [templateOwner, templateRepo] = template.split('/')
   const { data: repo } = await github.post(
     `/repos/${templateOwner}/${templateRepo}/generate`,
@@ -25,6 +25,11 @@ const createRepo = async (orgName, repoName, template) => {
     { headers: { accept: 'application/vnd.github.baptiste-preview+json' } }
   )
   return repo
+}
+
+const getMainBranch = async (repoName) => {
+  const { data: branches } = await github.get(`/repos/${repoName}/branches`)
+  return branches.pop()
 }
 
 const getFirstCommit = async (repoName) => {
@@ -64,31 +69,29 @@ const setBranchProtection = async (fullName, branchName) =>
     { headers: { accept: 'application/vnd.github.luke-cage-preview+json' } }
   )
 
-const addMember = async (fullName, login) =>
+const addMember = async (fullName, login, isAdmin) =>
   github.put(`/repos/${fullName}/collaborators/${login}`, {
-    permission: 'push',
+    permission: isAdmin ? 'admin' : 'push',
   })
 
-export const createFullRepo = async (orgName, repoName, template, members) => {
-  // Create the repo
-  // const repo = await createRepo(orgName, repoName, template)
+export const delay = async (ms = 250) => new Promise((resolve) => setTimeout(resolve, ms))
 
-  // // Get its full name, and first commit's sha
-  // const { full_name: fullName } = repo
+export const setupRepo = async (fullName, members, admin) => {
+  // Get its full name, and first commit's sha
+  const { sha } = await getFirstCommit(fullName)
 
-  const fullName = orgName + '/' + repoName
+  // Create dev branch and set it as the default branch
+  await createBranch(fullName, 'dev', sha)
+  await setDefaultBranch(fullName, 'dev')
 
-  // const { sha } = await getFirstCommit(fullName)
-  // // Create dev branch and set it as the default branch
-  // await createBranch(fullName, 'dev', sha)
-  // await setDefaultBranch(fullName, 'dev')
-
-  // Create branch protections TODO: get list of branches before doing it
-  await setBranchProtection(fullName, 'master')
+  // Create branch protections
+  // This shouldn't break if GH sets main as default branch in the future
+  const { name: mainBranch } = await getMainBranch(fullName)
+  await setBranchProtection(fullName, mainBranch)
   await setBranchProtection(fullName, 'dev')
 
   // Add members
-  // await Promise.all(members.map((m) => addMember(fullName, m)))
+  await Promise.all(members.map((m) => addMember(fullName, m, m === admin)))
 }
 
 export const setAuthHeader = (token) => {

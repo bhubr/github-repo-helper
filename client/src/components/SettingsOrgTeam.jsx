@@ -1,9 +1,25 @@
+import { getTeam } from '../api'
+
 export default function SettingsOrgTeam({
+  auth,
   orgName,
   teamName,
-  handleInput,
-  handleSubmitTeamName,
+  methods: {
+    handleInput,
+    setTeamMembers,
+    setStep,
+  }
 }) {
+  const handleSubmitTeamName = async (e) => {
+    e.preventDefault()
+    const teamData = await getTeam('WildCodeSchool', teamName)
+    const isCurrentUserMember = !!teamData.find((u) => u.login === auth.login)
+    if (!isCurrentUserMember) {
+      teamData.push({ id: auth.id, login: auth.login })
+    }
+    setTeamMembers(teamData)
+    setStep(2)
+  }
   return (
     <form
       className="pure-form pure-form-stacked"
