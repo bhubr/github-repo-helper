@@ -21,14 +21,19 @@ app.get('/github/token', async (req, res) => {
     redirect_uri: redirectUri,
     grant_type: 'authorization_code'
   })
+  const clientSecretLen = clientSecret.length - 4
+  const dbgPayload = payload.replace(clientSecret.substr(2, clientSecretLen), '*'.repeat(clientSecretLen))
+  console.log('payload', dbgPayload)
   try {
     const { data } = await axios.post(tokenUrl, payload, { headers: { 'content-type': 'application/x-www-form-urlencoded;charset=utf-8' } })
+    console.log('got access token')
     // GitHub sends back the response as an url-encoded string
     const parsed = qs.parse(data)
     const { access_token: accessToken } = parsed
     const { data: profile } = await axios.get('https://api.github.com/user', {
       headers: { authorization: `Bearer ${accessToken}` }
     })
+    console.log('got profile')
     const { id, login, avatar_url: avatarUrl } = profile
     res.json({ id, login, avatar_url: avatarUrl, access_token: accessToken })
   } catch (err) {
