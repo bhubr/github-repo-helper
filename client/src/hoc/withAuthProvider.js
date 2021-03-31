@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import AuthContext from '../contexts/auth'
 const withAuthProvider = (Component) => {
-  return (props) => {
+  const WrappedComponent = (props) => {
     const storedAuth = sessionStorage.getItem('gh:auth')
     const initialAuth = storedAuth ? JSON.parse(storedAuth) : null
     const [auth, setAuth] = useState(initialAuth)
@@ -11,6 +11,8 @@ const withAuthProvider = (Component) => {
       </AuthContext.Provider>
     )
   }
+  WrappedComponent.displayName = 'withAuthProvider'
+  return WrappedComponent
 }
 
 export default withAuthProvider

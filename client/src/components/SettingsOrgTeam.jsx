@@ -1,14 +1,11 @@
+import React from 'react'
 import { getTeam } from '../api'
 
 export default function SettingsOrgTeam({
   auth,
   orgName,
   teamName,
-  methods: {
-    handleInput,
-    setTeamMembers,
-    setStep,
-  }
+  methods: { handleInput, setTeamMembers, setStep },
 }) {
   const handleSubmitTeamName = async (e) => {
     e.preventDefault()

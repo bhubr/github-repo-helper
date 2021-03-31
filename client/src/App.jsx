@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 import AppMenu from './components/AppMenu'
 import SettingsOrgTeam from './components/SettingsOrgTeam'
 import SettingsRepo from './components/SettingsRepo'

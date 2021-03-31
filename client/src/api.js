@@ -10,10 +10,10 @@ if (initialAuth) {
   github.defaults.headers.authorization = `Bearer ${initialAuth.access_token}`
 }
 
-export const getTeam = async (org, teamName) =>
+export const getTeam = async(org, teamName) =>
   github.get(`/orgs/${org}/teams/${teamName}/members`).then((res) => res.data)
 
-export const createRepo = async (orgName, repoName, template) => {
+export const createRepo = async(orgName, repoName, template) => {
   const [templateOwner, templateRepo] = template.split('/')
   const { data: repo } = await github.post(
     `/repos/${templateOwner}/${templateRepo}/generate`,
@@ -22,33 +22,33 @@ export const createRepo = async (orgName, repoName, template) => {
       name: repoName,
       private: false,
     },
-    { headers: { accept: 'application/vnd.github.baptiste-preview+json' } }
+    { headers: { accept: 'application/vnd.github.baptiste-preview+json' } },
   )
   return repo
 }
 
-const getMainBranch = async (repoName) => {
+const getMainBranch = async(repoName) => {
   const { data: branches } = await github.get(`/repos/${repoName}/branches`)
   return branches.pop()
 }
 
-const getFirstCommit = async (repoName) => {
+const getFirstCommit = async(repoName) => {
   const { data: commits } = await github.get(`/repos/${repoName}/commits`)
   return commits.pop()
 }
 
-const createBranch = async (fullName, branchName, sha) =>
+const createBranch = async(fullName, branchName, sha) =>
   github.post(`/repos/${fullName}/git/refs`, {
     ref: `refs/heads/${branchName}`,
     sha,
   })
 
-const setDefaultBranch = async (fullName, branchName) =>
+const setDefaultBranch = async(fullName, branchName) =>
   await github.patch(`/repos/${fullName}`, {
     default_branch: branchName,
   })
 
-const setBranchProtection = async (fullName, branchName) =>
+const setBranchProtection = async(fullName, branchName) =>
   await github.put(
     `/repos/${fullName}/branches/${branchName}/protection`,
     {
@@ -59,24 +59,24 @@ const setBranchProtection = async (fullName, branchName) =>
         // },
         dismiss_stale_reviews: false,
         require_code_owner_reviews: false,
-        required_approving_review_count: 1
+        required_approving_review_count: 1,
       },
       enforce_admins: false,
       required_status_checks: null,
       restrictions: null,
       // TODO: restrict who can push to matching branches
     },
-    { headers: { accept: 'application/vnd.github.luke-cage-preview+json' } }
+    { headers: { accept: 'application/vnd.github.luke-cage-preview+json' } },
   )
 
-const addMember = async (fullName, login, isAdmin) =>
+const addMember = async(fullName, login, isAdmin) =>
   github.put(`/repos/${fullName}/collaborators/${login}`, {
     permission: isAdmin ? 'admin' : 'push',
   })
 
-export const delay = async (ms = 250) => new Promise((resolve) => setTimeout(resolve, ms))
+export const delay = async(ms = 250) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const setupRepo = async (fullName, members, admin) => {
+export const setupRepo = async(fullName, members, admin) => {
   // Get its full name, and first commit's sha
   const { sha } = await getFirstCommit(fullName)
 

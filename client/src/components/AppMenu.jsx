@@ -3,12 +3,7 @@ import OAuth2Login from 'react-simple-oauth2-login'
 import axios from 'axios'
 import ErrorAlert from './ErrorAlert'
 import AuthContext from '../contexts/auth'
-import {
-  authorizationUrl,
-  clientId,
-  redirectUri,
-  serverUrl,
-} from '../settings-code'
+import { authorizationUrl, clientId, redirectUri, serverUrl } from '../settings'
 import { setAuthHeader } from '../api'
 
 export default function AppMenu() {
@@ -40,10 +35,7 @@ export default function AppMenu() {
         {auth ? (
           <li className="pure-menu-item">
             <span className="AppMenu-signedIn">
-              <img
-                src={auth.avatar_url}
-                alt={auth.login}
-              />
+              <img src={auth.avatar_url} alt={auth.login} />
               <button className="pure-button" type="button" onClick={clearAuth}>
                 Logout
               </button>

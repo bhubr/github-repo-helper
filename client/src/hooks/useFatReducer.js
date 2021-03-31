@@ -2,21 +2,25 @@ import { useEffect, useReducer } from 'react'
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'INPUT':
+    case 'INPUT': {
       const { name, value } = action
       return { ...state, [name]: value }
-    case 'STORE_MEMBERS':
+    }
+    case 'STORE_MEMBERS': {
       const { members } = action
       return { ...state, teamMembers: members }
-    case 'TOGGLE_MEMBER':
+    }
+    case 'TOGGLE_MEMBER': {
       const { login } = action
       const repoMembers = state.repoMembers.includes(login)
         ? state.repoMembers.filter((l) => l !== login)
         : [...state.repoMembers, login]
       return { ...state, repoMembers }
-    case 'SET_STEP':
+    }
+    case 'SET_STEP': {
       const { step } = action
       return { ...state, step }
+    }
     default:
       throw new Error()
   }
@@ -52,7 +56,7 @@ const useFatReducer = () => {
   const initialState = getStoredState()
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const dispatchAndStore = async (...args) => {
+  const dispatchAndStore = async(...args) => {
     await dispatch(...args)
   }
 

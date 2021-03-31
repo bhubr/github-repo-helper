@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Loader from './Loader'
 import { createRepo, delay, setupRepo } from '../api'
 
@@ -31,7 +31,7 @@ export default function SettingsRepo({
     // Create repo
     setLoading('Creating repo')
     const fullRepoName = `${repoPrefix}${repoName}`
-    const repo = await createRepo(orgName, fullRepoName, template).catch(
+    await createRepo(orgName, fullRepoName, template).catch(
       rethrow('repo creation')
     )
 
@@ -40,7 +40,7 @@ export default function SettingsRepo({
     await delay(5000)
 
     setLoading('Post-creation setup')
-    const { full_name: fullName } = repo
+    const fullName = `${orgName}/${fullRepoName}`
     await setupRepo(fullName, repoMembers, repoAdmin).catch(
       rethrow('repo post-setup')
     )
