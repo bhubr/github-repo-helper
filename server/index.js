@@ -3,11 +3,11 @@ const cors = require('cors')
 const axios = require('axios')
 const qs = require('qs')
 require('dotenv').config()
-const { port, oauth } = require('./settings')
+const { port, oauth, clientAppUrl } = require('./settings')
 
 const app = express()
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: clientAppUrl
 }))
 
 app.get('/github/token', async (req, res) => {
@@ -33,7 +33,7 @@ app.get('/github/token', async (req, res) => {
     const { data: profile } = await axios.get('https://api.github.com/user', {
       headers: { authorization: `Bearer ${accessToken}` }
     })
-    console.log('got profile')
+    console.log('got profile', profile)
     const { id, login, avatar_url: avatarUrl } = profile
     res.json({ id, login, avatar_url: avatarUrl, access_token: accessToken })
   } catch (err) {
