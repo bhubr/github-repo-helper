@@ -5,6 +5,9 @@ const qs = require('qs')
 require('dotenv').config()
 const { port, oauth, clientAppUrl } = require('./settings')
 
+console.log('cors config', {
+  origin: clientAppUrl
+})
 const app = express()
 app.use(cors({
   origin: clientAppUrl
