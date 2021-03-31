@@ -36,7 +36,3 @@ OAuth settings
 ## Run
 
 * In both `client` and `server`, run `pnpm install`
-
-## Todo
-
-There's definitely room for improvement. Right now
