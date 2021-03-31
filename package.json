@@ -1,0 +1,8 @@
+{
+  "name": "gh-repo-helper",
+  "description": "This is a fake package.json, designed to trick Heroku into starting the server app",
+  "scripts": {
+    "postinstall": "cd server && yarn",
+    "start": "node server/index"
+  }
+}

@@ -16,15 +16,22 @@ It can come in handy when you want to "automate" repetitive tasks. It has limita
 
 For this to work, you need to create a new OAuth app under <https://github.com/organizations/YourOrganization/settings/applications>, so as to get a client id & secret.
 
-* Install [pnpm](https://pnpm.js.org/) : `npm install -g pnpm`
-* In both `client` and `server`, run `pnpm install`
+* Install [yarn](https://yarnpkg.com/) : `npm install -g yarn`
+* In both `client` and `server`, run `yarn install`
 * In `client`, copy `.env.local.sample` as `.env.local` and adjust to your
 OAuth settings
 * In `server`, copy `.env.sample` as `.env` and adjust to your OAuth settings
 
 ## Run
 
-* In both `client` and `server`, run `pnpm install`
+* In both `client` and `server`, run `yarn start`
+
+## Deploy
+
+You should probably fork this repo, and change the `homepage` value in `client/package.json`
+
+* Client (to GitHub Pages): `yarn deploy`
+* Server (to Heroku): the `package.json` at the repo root should take care of everything.
 
 ## Limitations
 
