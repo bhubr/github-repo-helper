@@ -8,8 +8,8 @@ const settings = {
     clientId: process.env.OAUTH_CLIENT_ID,
     clientSecret: process.env.OAUTH_CLIENT_SECRET,
     redirectUri,
-    clientAppUrl: redirectUrlObj.origin
-  }
+  },
+  clientAppUrl: redirectUrlObj.origin
 }
 
 module.exports = settings
