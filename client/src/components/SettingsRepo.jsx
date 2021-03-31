@@ -29,7 +29,7 @@ export default function SettingsRepo({
       text,
     })
 
-  const handleCreateOption = async (inputValue) => {
+  const handleCreateOption = async(inputValue) => {
     setLoading('Checking template', inputValue)
     try {
       const data = await checkRepo(inputValue)
@@ -49,7 +49,7 @@ export default function SettingsRepo({
     }
   }
 
-  const handleSubmitRepo = async (e) => {
+  const handleSubmitRepo = async(e) => {
     e.preventDefault()
 
     try {
@@ -79,7 +79,7 @@ export default function SettingsRepo({
     } catch (err) {
       NotificationManager.error({
         title: 'Something bad happened',
-        message: `Repo creation failed!`,
+        message: 'Repo creation failed!',
       })
     }
   }

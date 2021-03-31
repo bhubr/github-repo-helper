@@ -10,7 +10,7 @@ export default function SettingsOrgTeam({
   teamName,
   methods: { handleInput, setTeamMembers, setStep },
 }) {
-  const handleSubmitTeamName = async (e) => {
+  const handleSubmitTeamName = async(e) => {
     e.preventDefault()
     try {
       const teamData = await getTeam(orgName, teamName)

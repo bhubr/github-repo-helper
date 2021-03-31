@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "github-repo-helper-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
