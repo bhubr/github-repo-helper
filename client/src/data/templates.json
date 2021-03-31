@@ -1,0 +1,12 @@
+[
+  {
+    "fullname": "bhubr/react-eslint-prettier-template",
+    "description": "React + ESLint + Prettier",
+    "icon": "react"
+  },
+  {
+    "fullname": "bhubr/express-eslint-prettier-template",
+    "description": "Express + ESLint + Prettier",
+    "icon": "nodejs"
+  }
+]

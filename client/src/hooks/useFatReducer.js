@@ -1,10 +1,18 @@
+// Note: I should whip myself for using such a lousy name!!
 import { useEffect, useReducer } from 'react'
+import baseTemplates from '../data/templates.json'
+
+const mapTemplates = arr => arr.map(({ fullname: value, description: label, icon }) => ({ value, label, icon }))
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INPUT': {
       const { name, value } = action
       return { ...state, [name]: value }
+    }
+    case 'TEMPLATE': {
+      const { template } = action
+      return { ...state, template }
     }
     case 'STORE_MEMBERS': {
       const { members } = action
@@ -21,8 +29,14 @@ const reducer = (state, action) => {
       const { step } = action
       return { ...state, step }
     }
+    case 'ADD_TEMPLATE': {
+      const { label, value } = action
+      const newTemplate = { label, value }
+      const templates = [...state.templates, newTemplate]
+      return { ...state, templates }
+    }
     default:
-      throw new Error()
+      throw new Error(`Unknown action ${action.type}`)
   }
 }
 
@@ -33,11 +47,12 @@ const getStoredState = () => {
     teamName: '',
     repoPrefix: '',
     repoName: '',
-    template: '',
+    template: null,
     repoMembers: [],
     teamMembers: [],
+    templates: mapTemplates(baseTemplates),
   }
-  const storedJson = sessionStorage.getItem('wcs:projdata')
+  const storedJson = sessionStorage.getItem('gh:projdata')
   if (!storedJson) return defaultState
   try {
     const parsedState = JSON.parse(storedJson)
@@ -49,7 +64,7 @@ const getStoredState = () => {
 
 const setStoredState = (state) => {
   const stateJson = JSON.stringify(state)
-  sessionStorage.setItem('wcs:projdata', stateJson)
+  sessionStorage.setItem('gh:projdata', stateJson)
 }
 
 const useFatReducer = () => {
@@ -71,6 +86,28 @@ const useFatReducer = () => {
       value,
     })
 
+  const handleChangeTemplate = (selectValue) => {
+    if (selectValue === null) {
+      dispatchAndStore({
+        type: 'TEMPLATE',
+        template: null,
+      })
+      return
+    }
+    const { label, value } = selectValue
+    if (label === value && !state.templates.find(t => t.value === value)) {
+      dispatchAndStore({
+        type: 'ADD_TEMPLATE',
+        label,
+        value,
+      })
+    }
+    dispatchAndStore({
+      type: 'TEMPLATE',
+      template: selectValue,
+    })
+  }
+
   const setTeamMembers = (members) =>
     dispatchAndStore({
       type: 'STORE_MEMBERS',
@@ -91,6 +128,7 @@ const useFatReducer = () => {
     state,
     {
       handleInput,
+      handleChangeTemplate,
       setTeamMembers,
       isRepoMember,
       toggleRepoMember,

@@ -1,4 +1,7 @@
 import React, { useEffect, useContext } from 'react'
+import {
+  NotificationContainer,
+} from 'react-light-notifications'
 import AppMenu from './components/AppMenu'
 import SettingsOrgTeam from './components/SettingsOrgTeam'
 import SettingsRepo from './components/SettingsRepo'
@@ -11,6 +14,7 @@ const Layout = ({ children }) => (
   <div className="App">
     <AppMenu />
     <main className="App-inner">{children}</main>
+    <NotificationContainer />
   </div>
 )
 

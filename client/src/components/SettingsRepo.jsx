@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
+import CreatableSelect from 'react-select/creatable'
+import {
+  NotificationManager,
+} from 'react-light-notifications'
 import Loader from './Loader'
-import { createRepo, delay, setupRepo } from '../api'
+import { createRepo, delay, checkRepo, setupRepo } from '../api'
 
 export default function SettingsRepo({
   repoAdmin,
-  state: { orgName, repoPrefix, repoName, template, repoMembers, teamMembers },
-  methods: { handleInput, isRepoMember, toggleRepoMember, setStep },
+  state: { orgName, repoName, template, repoMembers, teamMembers, templates },
+  methods: { handleInput, handleChangeTemplate, isRepoMember, toggleRepoMember, setStep },
 }) {
   const [status, setStatus] = useState(null)
 
@@ -25,31 +29,59 @@ export default function SettingsRepo({
       text,
     })
 
+  const handleCreateOption = async (inputValue) => {
+    setLoading('Checking template', inputValue)
+    try {
+      const data = await checkRepo(inputValue)
+      console.log(inputValue, data)
+      NotificationManager.success({
+        title: 'Template added',
+        message: `Good news, template "${inputValue}" exists!`,
+      })
+      handleChangeTemplate({ label: inputValue, value: inputValue })
+    } catch (err) {
+      NotificationManager.error({
+        title: 'Template not added',
+        message: `Oops! Template "${inputValue}" does not exist!`,
+      })
+    } finally {
+      setStatus(null)
+    }
+  }
+
   const handleSubmitRepo = async (e) => {
     e.preventDefault()
 
-    // Create repo
-    setLoading('Creating repo')
-    const fullRepoName = `${repoPrefix}${repoName}`
-    await createRepo(orgName, fullRepoName, template).catch(
-      rethrow('repo creation')
-    )
+    try {
+      const templateName = template.value
 
-    // Wait some time (otherwise no commits exist => can't create dev branch)
-    setLoading('Waiting...')
-    await delay(5000)
+      // Create repo
+      setLoading('Creating repo')
+      await createRepo(orgName, repoName, templateName).catch(
+        rethrow('repo creation')
+      )
 
-    setLoading('Post-creation setup')
-    const fullName = `${orgName}/${fullRepoName}`
-    await setupRepo(fullName, repoMembers, repoAdmin).catch(
-      rethrow('repo post-setup')
-    )
+      // Wait some time (otherwise no commits exist => can't create dev branch)
+      setLoading('Waiting...')
+      await delay(5000)
 
-    setStatus({
-      loading: false,
-      level: 'success',
-      text: `Done creating ${fullName}`,
-    })
+      setLoading('Post-creation setup')
+      const fullName = `${orgName}/${repoName}`
+      await setupRepo(fullName, repoMembers, repoAdmin).catch(
+        rethrow('repo post-setup')
+      )
+
+      NotificationManager.success({
+        title: 'Repo created',
+        message: `Done creating ${fullName}`,
+      })
+      setStatus(null)
+    } catch (err) {
+      NotificationManager.error({
+        title: 'Something bad happened',
+        message: `Repo creation failed!`,
+      })
+    }
   }
   return (
     <form className="pure-form pure-form-stacked" onSubmit={handleSubmitRepo}>
@@ -84,14 +116,6 @@ export default function SettingsRepo({
           </div>
 
           <div className="pure-u-2-5">
-            <label htmlFor="repoPrefix">Repo name prefix</label>
-            <input
-              id="repoPrefix"
-              name="repoPrefix"
-              value={repoPrefix}
-              onChange={handleInput}
-              placeholder="common-repo-name-"
-            />
             <label htmlFor="repoName">Repo name</label>
             <input
               id="repoName"
@@ -100,15 +124,17 @@ export default function SettingsRepo({
               onChange={handleInput}
               placeholder="name"
             />
-            <label htmlFor="template">Repo template</label>
-            <input
+            <label htmlFor="template" style={{ marginTop: '1.5em' }}>Repo template</label>
+            <p>Select an existing template, or fill in the <code>owner/repository</code> template.</p>
+            <CreatableSelect
               id="template"
-              name="template"
+              isClearable
+              onCreateOption={handleCreateOption}
+              onChange={handleChangeTemplate}
+              options={templates}
               value={template}
-              onChange={handleInput}
-              placeholder="login/repo"
             />
-            <button className="pure-button pure-button-primary">Submit</button>
+            <button className="pure-button pure-button-primary" disabled={!repoName || !template}>Submit</button>
 
             {status && (
               <div className="SettingsRepo-status">

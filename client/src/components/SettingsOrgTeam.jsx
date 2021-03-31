@@ -1,4 +1,7 @@
 import React from 'react'
+import {
+  NotificationManager,
+} from 'react-light-notifications'
 import { getTeam } from '../api'
 
 export default function SettingsOrgTeam({
@@ -9,13 +12,24 @@ export default function SettingsOrgTeam({
 }) {
   const handleSubmitTeamName = async (e) => {
     e.preventDefault()
-    const teamData = await getTeam('WildCodeSchool', teamName)
-    const isCurrentUserMember = !!teamData.find((u) => u.login === auth.login)
-    if (!isCurrentUserMember) {
-      teamData.push({ id: auth.id, login: auth.login })
+    try {
+      const teamData = await getTeam(orgName, teamName)
+      const isCurrentUserMember = !!teamData.find((u) => u.login === auth.login)
+      if (!isCurrentUserMember) {
+        teamData.push({ id: auth.id, login: auth.login })
+      }
+      setTeamMembers(teamData)
+      NotificationManager.success({
+        title: 'Team successfully retrieved',
+        message: `Found team "${teamName}" with ${teamData.length} members`,
+      })
+      setStep(2)
+    } catch (err) {
+      NotificationManager.error({
+        title: 'Organization or team not found',
+        message: `Error message: ${err.message}`,
+      })
     }
-    setTeamMembers(teamData)
-    setStep(2)
   }
   return (
     <form

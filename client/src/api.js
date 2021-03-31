@@ -32,6 +32,11 @@ const getMainBranch = async(repoName) => {
   return branches.pop()
 }
 
+export const checkRepo = async(repoName) => {
+  const { data } = await github.get(`/repos/${repoName}`)
+  return data
+}
+
 const getFirstCommit = async(repoName) => {
   const { data: commits } = await github.get(`/repos/${repoName}/commits`)
   return commits.pop()
