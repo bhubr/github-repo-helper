@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/github-repo-helper/static/css/main.e3024f20.chunk.css",
+    "main.js": "/github-repo-helper/static/js/main.f98ba821.chunk.js",
+    "main.js.map": "/github-repo-helper/static/js/main.f98ba821.chunk.js.map",
+    "runtime-main.js": "/github-repo-helper/static/js/runtime-main.63ff6389.js",
+    "runtime-main.js.map": "/github-repo-helper/static/js/runtime-main.63ff6389.js.map",
+    "static/css/2.1342b919.chunk.css": "/github-repo-helper/static/css/2.1342b919.chunk.css",
+    "static/js/2.44db2d36.chunk.js": "/github-repo-helper/static/js/2.44db2d36.chunk.js",
+    "static/js/2.44db2d36.chunk.js.map": "/github-repo-helper/static/js/2.44db2d36.chunk.js.map",
+    "index.html": "/github-repo-helper/index.html",
+    "precache-manifest.da258b61dd9e5bb771738e93b1547781.js": "/github-repo-helper/precache-manifest.da258b61dd9e5bb771738e93b1547781.js",
+    "service-worker.js": "/github-repo-helper/service-worker.js",
+    "static/css/2.1342b919.chunk.css.map": "/github-repo-helper/static/css/2.1342b919.chunk.css.map",
+    "static/css/main.e3024f20.chunk.css.map": "/github-repo-helper/static/css/main.e3024f20.chunk.css.map",
+    "static/js/2.44db2d36.chunk.js.LICENSE.txt": "/github-repo-helper/static/js/2.44db2d36.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.63ff6389.js",
+    "static/css/2.1342b919.chunk.css",
+    "static/js/2.44db2d36.chunk.js",
+    "static/css/main.e3024f20.chunk.css",
+    "static/js/main.f98ba821.chunk.js"
+  ]
+}
