@@ -3,11 +3,11 @@ const cors = require('cors')
 const axios = require('axios')
 const qs = require('qs')
 require('dotenv').config()
-const { port, oauth } = require('./settings')
+const { port, oauth, clientAppUrl } = require('./settings')
 
 const app = express()
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: clientAppUrl
 }))
 
 app.get('/github/token', async (req, res) => {
